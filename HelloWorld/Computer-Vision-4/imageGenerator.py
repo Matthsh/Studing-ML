@@ -14,7 +14,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 model = tf.keras.models.Sequential([
-    # Recebe o input d uma imagem de 300 x 300 pixels com 3 camadas de cor, determina 16 filtros com range 3 x 3 e retorna um valor mairo que 0
+    # Recebe o input d uma imagem de 300 x 300 pixels com 3 camadas de cor (rgb), determina 16 filtros com range 3 x 3 e retorna um valor mairo que 0
     tf.keras.layers.Conv2D(16, (3, 3), activation='relu', input_shape=(300, 300, 3)),
     # Corta a imagem em secções de 2 x 2 pixels e filtra o maior valor de cada secção
     tf.keras.layers.MaxPooling2D(2, 2),
@@ -31,7 +31,7 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(1, activation='sigmoid')  
 ])
 
-
+# compila o modelo e seta parámetros e funçoes para o treino
 model.compile(
     # função que calcula o erro de cada treino
     loss='binary_crossentropy',
@@ -41,9 +41,19 @@ model.compile(
     metrics=['accuracy']
 )
 
+validation_dir = 'horse-or-human/validation/'
 
-history = model.fit(
-    train_generator,
-    epochs=15
+validation_datagen = ImageDataGenerator(rescale=1/255)
+
+validation_generator = train_datagen.flow_from_directory(
+    validation_dir,
+    target_size=(300, 300),
+    class_mode='binary'
 )
 
+# roda o modelo de treino o salva dentro de "history"
+history = model.fit_generator(
+    train_generator,
+    epochs=15,
+    validation_data=validation_generator
+)

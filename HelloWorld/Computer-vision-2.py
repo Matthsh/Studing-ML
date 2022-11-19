@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-class myCallback(tf.keras.callbacks.Callback): # Essa classe recebera um parámetro com um método do que chama uma função dentro de uma repetição
+class myCallback(tf.keras.callbacks.Callback): # Essa classe recebera um parámetro com um método que chama uma função dentro de uma repetição
     def on_epoch_end(self, epoch, logs={}): # a função no caso sera chamada no fim da repetição e verificara se a precisão alcançou 95%
         if(logs.get('accuracy')>0.95):
             print("\nReached 95% accuracy so cancelling training!")
