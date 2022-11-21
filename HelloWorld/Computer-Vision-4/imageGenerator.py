@@ -1,5 +1,8 @@
+import os
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+from keras.preprocessing import image
 
 training_dir = 'horse-or-human/training/'
 
@@ -54,6 +57,26 @@ validation_generator = train_datagen.flow_from_directory(
 # roda o modelo de treino o salva dentro de "history"
 history = model.fit_generator(
     train_generator,
-    epochs=15,
+    epochs=5,
     validation_data=validation_generator
 )
+
+pasta = './content'
+
+for arquivo in os.walk(pasta):
+    for fn in arquivo[2]:
+
+        # predictiong images
+        path = './content/' + fn
+        img = tf.keras.utils.load_img(path, target_size=(300, 300))
+        x = tf.keras.utils.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+
+        image_tensor = np.vstack([x])
+        classes = model.predict(image_tensor)
+        print(classes)
+        print(classes[0])
+        if classes[0]>0.5:
+            print(fn + " is a human")
+        else:
+            print(fn + " is a horse")
