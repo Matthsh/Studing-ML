@@ -68,14 +68,22 @@ for arquivo in os.walk(pasta):
 
         # predictiong images
         path = './content/' + fn
+        # carrega a imagem no tamanho correto em que o nodelo foi treinado
         img = tf.keras.utils.load_img(path, target_size=(300, 300))
+        # converte a imagem em um array 2D
         x = tf.keras.utils.img_to_array(img)
+        # expande as dimençoes do array para 3D como indicado no input_shape
         x = np.expand_dims(x, axis=0)
 
+        # Amontoa o array verticalmente para ficarem no mesmo formato dos dados de treino
         image_tensor = np.vstack([x])
+        # salva o array predict dentro de classe
         classes = model.predict(image_tensor)
+        # printa o array
         print(classes)
+        #printa o primeiro elemento do array
         print(classes[0])
+        # se o primeiro elemento do array for maior que 0.5 é humano se não é cavalo
         if classes[0]>0.5:
             print(fn + " is a human")
         else:
