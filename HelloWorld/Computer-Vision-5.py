@@ -12,10 +12,11 @@ weights_file = "inception_v3.h5"
 # usa a bilbioteca urllib para buscar(recuperar) no url de "weights_url" o arquivo de "weights_file"
 urllib.request.urlretrieve(weights_url, weights_file)
 
-# atribuimos hyperparametros a um modelo pré-treinado do google "InceptionV3"
+# salva um modelo pré-treinado do google chamado "InceptionV3" especificando um formato para ele
 pre_trained_model = InceptionV3(input_shape=(150, 150, 3),
  include_top=False,
  weights=None)
+# carrega o arquivo de pesos no modelo pré-treinado
 pre_trained_model.load_weights(weights_file)
 
 for layer in pre_trained_model.layers:
