@@ -4,6 +4,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from keras.preprocessing import image
 
+
 training_dir = 'horse-or-human/training/'
 
 # instancia do ImageDataGenerator

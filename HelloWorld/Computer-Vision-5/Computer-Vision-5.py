@@ -48,8 +48,6 @@ model.compile(optimizer=optimizers.RMSprop(learning_rate=0.0001),
 import os
 # importa a biblioteca zipfile para manipular arquivos zip
 import zipfile
-# importa a biblioteca shutil para manipular arquivos
-import shutil
 
 # atribui o url dos pessos a "local_zip"
 local_zip = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
@@ -92,40 +90,36 @@ train_generator = train_datagen.flow_from_directory(train_dir, target_size=(150,
 validation_generator = test_datagen.flow_from_directory(validation_dir, target_size=(150, 150), batch_size=20, class_mode='binary')
 
 # treina o modelo com 100 épocas, 100 passos por época e 50 passos de validação por época
-history = model.fit(train_generator, epochs=100, steps_per_epoch=100, validation_data=validation_generator, validation_steps=50, verbose=2)
+history = model.fit(train_generator, epochs=3, validation_data=validation_generator)
 
 # importa a biblioteca matplotlib para plotar gráficos
 import matplotlib.pyplot as plt
 
-# define o nome do diretório de teste
-test_dir = os.path.join(base_dir, 'test')
-# define o nome do diretório de teste de gatos
-test_cats_dir = os.path.join(test_dir, 'cats')
-# define o nome do diretório de teste de cachorros
-test_dogs_dir = os.path.join(test_dir, 'dogs')
-
-# define o tamanho das imagens de teste
-test_datagen = ImageDataGenerator(rescale=1./255)
-
-# define o tamanho das imagens de teste
-test_generator = test_datagen.flow_from_directory(test_cats_dir, target_size=(150, 150), batch_size=20, class_mode='binary')
-
-# avalia o modelo com os dados de teste
-test_loss, test_acc = model.evaluate(test_generator, steps=50)
-print('test acc:', test_acc)
-
-# plota o gráfico de acurácia
+# define o nome dos eixos x e y
 acc = history.history['acc']
 val_acc = history.history['val_acc']
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 
-epochs = range(len(acc))
+# define o tamanho do gráfico
+plt.figure(figsize=(8, 8))
+# define o número de linhas e colunas do gráfico
+plt.subplot(2, 1, 1)
+# plota o gráfico de acurácia
+plt.plot(acc, label='Training Accuracy')
+plt.plot(val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.ylabel('Accuracy')
+plt.ylim([min(plt.ylim()),1])
+plt.title('Training and Validation Accuracy')
 
-plt.plot(epochs, acc, 'r', label='Training acc')
-plt.plot(epochs, val_acc, 'b', label='Validation acc')
-plt.title('Training and validation accuracy')
-plt.legend(loc=0)
-plt.figure()
-
+# plota o gráfico de perda
+plt.subplot(2, 1, 2)
+plt.plot(loss, label='Training Loss')
+plt.plot(val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.ylabel('Cross Entropy')
+plt.ylim([0,1.0])
+plt.title('Training and Validation Loss')
+plt.xlabel('epoch')
 plt.show()
