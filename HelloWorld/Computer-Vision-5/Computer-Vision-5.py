@@ -62,3 +62,70 @@ urllib.request.urlretrieve(local_zip, zip_file)
 zip_ref = zipfile.ZipFile(zip_file, 'r')
 zip_ref.extractall()
 zip_ref.close()
+
+# define o nome do diretório base
+base_dir = 'cats_and_dogs_filtered'
+
+# define o nome do diretório de treino
+train_dir = os.path.join(base_dir, 'train')
+# define o nome do diretório de validação
+validation_dir = os.path.join(base_dir, 'validation')
+
+# define o nome do diretório de treino de gatos
+train_cats_dir = os.path.join(train_dir, 'cats')
+# define o nome do diretório de treino de cachorros
+train_dogs_dir = os.path.join(train_dir, 'dogs')
+# define o nome do diretório de validação de gatos
+validation_cats_dir = os.path.join(validation_dir, 'cats')
+# define o nome do diretório de validação de cachorros
+validation_dogs_dir = os.path.join(validation_dir, 'dogs')
+
+# importa a biblioteca ImageDataGenerator para gerar dados de imagens
+from keras.preprocessing.image import ImageDataGenerator
+
+# define o tamanho das imagens de treino e validação
+train_datagen = ImageDataGenerator(rescale=1./255)
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+# define o tamanho das imagens de treino e validação
+train_generator = train_datagen.flow_from_directory(train_dir, target_size=(150, 150), batch_size=20, class_mode='binary')
+validation_generator = test_datagen.flow_from_directory(validation_dir, target_size=(150, 150), batch_size=20, class_mode='binary')
+
+# treina o modelo com 100 épocas, 100 passos por época e 50 passos de validação por época
+history = model.fit(train_generator, epochs=100, steps_per_epoch=100, validation_data=validation_generator, validation_steps=50, verbose=2)
+
+# importa a biblioteca matplotlib para plotar gráficos
+import matplotlib.pyplot as plt
+
+# define o nome do diretório de teste
+test_dir = os.path.join(base_dir, 'test')
+# define o nome do diretório de teste de gatos
+test_cats_dir = os.path.join(test_dir, 'cats')
+# define o nome do diretório de teste de cachorros
+test_dogs_dir = os.path.join(test_dir, 'dogs')
+
+# define o tamanho das imagens de teste
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+# define o tamanho das imagens de teste
+test_generator = test_datagen.flow_from_directory(test_cats_dir, target_size=(150, 150), batch_size=20, class_mode='binary')
+
+# avalia o modelo com os dados de teste
+test_loss, test_acc = model.evaluate(test_generator, steps=50)
+print('test acc:', test_acc)
+
+# plota o gráfico de acurácia
+acc = history.history['acc']
+val_acc = history.history['val_acc']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+
+epochs = range(len(acc))
+
+plt.plot(epochs, acc, 'r', label='Training acc')
+plt.plot(epochs, val_acc, 'b', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.legend(loc=0)
+plt.figure()
+
+plt.show()
