@@ -2,7 +2,6 @@ import os
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
-from keras.preprocessing import image
 
 
 training_dir = 'horse-or-human/training/'
@@ -62,13 +61,13 @@ history = model.fit_generator(
     validation_data=validation_generator
 )
 
-pasta = './content'
+pasta = './content/'
 
 for arquivo in os.walk(pasta):
     for fn in arquivo[2]:
 
         # predictiong images
-        path = './content/' + fn
+        path = pasta + fn
         # carrega a imagem no tamanho correto em que o nodelo foi treinado
         img = tf.keras.utils.load_img(path, target_size=(300, 300))
         # converte a imagem em um array 2D

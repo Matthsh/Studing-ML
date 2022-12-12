@@ -1,21 +1,7 @@
-# wget --no-check-certificate https://storage.googleapis.com/laurencemoroney-blog.appspot.com/rps.zip -O /tmp/rps.zip
-
-# importa a biblioteca os para manipular arquivos
-import zipfile
 # importa a biblioteca ImageDataGenerator para gerar dados de imagens
 from keras.preprocessing.image import ImageDataGenerator
-
-
-# atribui o local do zip a uma variável
-local_zip = '/Computer-Vision-6/rps.zip'
-
-
-# abre o arquivo em modo de leitura(read)
-zip_ref = zipfile.ZipFile(local_zip, 'r')
-# extrai o arquivo zipado
-zip_ref.extractall('/Computer-Vision-6')
-# fecha o arquivo
-zip_ref.close()
+# importa a biblioteca tensorflow
+import tensorflow as tf
 
 
 # define o nome do diretório base
@@ -39,3 +25,49 @@ train_generator = training_datagen.flow_from_directory(
     target_size=(150,150),
     class_mode='categorical'
 )
+
+
+# define o modelo de rede neural
+model = tf.keras.models.Sequential([
+    
+    # primeira camada de convolução
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu', input_shape=(150, 150, 3)),
+    tf.keras.layers.MaxPooling2D(2, 2),
+
+    # segunda camada de convolução
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+
+    # terceira camada de convolução
+    tf.keras.layers.Conv2D(128, (3,3), activation='relu'), 
+    tf.keras.layers.MaxPooling2D(2,2),
+
+    # quarta camada de convolução
+    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+
+    # camada de achatamento dos resultados para alimentar o DNN (Deep Neural Network)
+    tf.keras.layers.Flatten(),
+
+    # camada escondida de 512 neurônios
+    tf.keras.layers.Dense(512, activation='relu'),
+
+    # camada de saída com 3 neurônios
+    tf.keras.layers.Dense(3, activation='softmax')
+])
+
+
+# compila o modelo
+model.compile(loss = 'categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+
+
+# treina o modelo
+history = model.fit(train_generator, epochs=25, steps_per_epoch=20, verbose=1)
+
+
+# salva o modelo
+model.save("rps.h5")
+
+# salva o histórico de treinamento (histórico de aprendizado)
+import pickle
+pickle.dump(history, open("history.p", "wb"))
