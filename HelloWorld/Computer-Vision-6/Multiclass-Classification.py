@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 # define o nome do diretório base
-TRAINING_DIR = "/Computer-Vision-6/rps/"
+TRAINING_DIR = "/home/matthsh/Documentos/Studing-ML/HelloWorld/Computer-Vision-6/training-dataset/rps"
 # define o nome do diretório de treino e alguns parametros de formatação para as imagens
 training_datagen = ImageDataGenerator(
     rescale = 1./255,
@@ -65,9 +65,10 @@ model.compile(loss = 'categorical_crossentropy', optimizer='rmsprop', metrics=['
 history = model.fit(train_generator, epochs=25, steps_per_epoch=20, verbose=1)
 
 
-# salva o modelo
-model.save("rps.h5")
+# salva o modelo dentro da pasta /modelo-history
+model.save("/home/matthsh/Documentos/Studing-ML/HelloWorld/Computer-Vision-6/modelo-history/modelo.h5")
 
-# salva o histórico de treinamento (histórico de aprendizado)
+# salva o histórico de treinamento dentro da pasta /modelo-history
 import pickle
-pickle.dump(history, open("history.p", "wb"))
+with open('/home/matthsh/Documentos/Studing-ML/HelloWorld/Computer-Vision-6/modelo-history/history.pickle', 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
