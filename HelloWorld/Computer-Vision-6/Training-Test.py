@@ -25,12 +25,14 @@ for arquivo in os.walk(amostras):
         img_array = tf.keras.utils.img_to_array(img)
         # expande as dimensões da imagem para usar o (r,g,b) para que ela possa ser usada no modelo
         img_array = tf.expand_dims(img_array, 0)
+        images = np.vstack([img_array])
         # faz a predição da imagem
-        predictions = model.predict(img_array)
+        predictions = model.predict(images, batch_size=10)
+        print("predictions: ", predictions)
         # retorna o resultado da predição
-        score = predictions[0]
+        score = predictions
         # printa se a imagem é pedra, papel ou tesoura
         print(
-            "{} This image most likely belongs to {} with a {:.2f} percent confidence."
-            .format(fn, class_names[np.argmax(score)], 100 * np.max(score))
+            "{} This image most likely belongs to {}."
+            .format(fn, class_names[np.argmax(score)])
         )
